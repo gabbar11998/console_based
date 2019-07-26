@@ -1,0 +1,121 @@
+import json
+import pickle
+class Customer:
+    cusList = []
+    def __init__(self):
+        print()
+        self.id=0
+        self.Name=""
+        self.address=""
+    def addCustomer(self):
+        Customer.cusList.append(self)
+    def getDetails(self,id):
+        for cus in Customer.cusList:
+            if(cus.id==id):
+                self.id=cus.id
+                self.Name=cus.Name
+                self.address=cus.address
+                return
+        raise Exception("Id Not Found")
+
+    def deleteCus(self,id):
+        for i in range(len(Customer.cusList)):
+            if(Customer.cusList[i].id==id):
+                Customer.cusList.pop(i)
+                return
+    def updateCus(self):
+        for cus in Customer.cusList:
+            if(cus.id==self.id):
+                cus.Name=self.Name
+                cus.address=self.address
+                return
+    def saveDataUsingPickle(self):
+        f=open("D:/MyCusMgt.txt",'wb')
+        pickle.dump(Customer.cusList,f)
+    def loadDataUsingPickle(self):
+        f=open("D:/MyCusMgt.txt",'rb')
+        Customer.cusList=pickle.load(f)
+
+    def convertObjectIntoDictionary(self,cusObject):
+        return cusObject.__dict__
+
+    def saveDataUsingJSON(self):
+        f=open("D:/MyCusMgt.txt",'w')
+        json.dump(Customer.cusList,f,default=self.convertObjectIntoDictionary)
+    def loadDataUsingJSON(self):
+        f=open("D:/MyCusMgt.txt",'r')
+        Customer.cusList=json.load(f,object_hook=self.convertDictIntoCusObject)
+
+    def convertDictIntoCusObject(self,cusDict):
+        cus = Customer()
+        cus.id = cusDict["id"]
+        cus.Name = cusDict["Name"]
+        cus.address = cusDict["address"]
+        return cus
+
+    def mySortAlgo(self,cus):
+        return cus.Name
+    def sortCustomer(self):
+        Customer.cusList.sort(key=self.mySortAlgo)
+
+
+def showCustomer(cus):
+    print("CustomerId: ",cus.id,"Name=",cus.Name,"Address=",cus.address)
+
+
+def showAllCustomer():
+    for cus in Customer.cusList:
+        showCustomer(cus)
+
+print("Module Name ",__name__)
+if(__name__=="__main__"):
+    while(True):
+        print("1.Add Cus\n2.Get Details Cus\n3.Delete Cus\n4.Update Cus\n5.Show All Customer\n6.Sort Customer\n7.Save Data\n8.Load Data\n0.Exit")
+        c=input("Enter your choice")
+        if(c=='1'):
+            try:
+                cus=Customer()
+                cus.id=input("Enter Id")
+                cus.Name=input("Enter Name")
+                cus.address=input("Enter Address")
+                cus.addCustomer()
+                print("Customer Added Sucessfully")
+            except Exception as ex:
+                print(ex)
+        elif (c == "2"):
+            try:
+               cus=Customer()
+               id=input("Enter Id")
+               cus.getDetails(id)
+               showCustomer(cus)
+            except Exception as ex:
+                print(ex)
+        elif (c == "3"):
+            cus = Customer()
+            id = input("Enter Id")
+            cus.deleteCus(id)
+            print("Customer Deteted Sucessfully")
+        elif (c == "4"):
+            cus = Customer()
+            cus.id = input("Enter Id")
+            cus.Name=input("Enter Name for Update")
+            cus.address = input("Enter Address for Update")
+            cus.updateCus()
+            print("Customer updated Sucessfully")
+
+        elif(c=="5"):
+            showAllCustomer()
+        elif (c == "6"):
+            cus =Customer()
+            cus.sortCustomer()
+        elif (c == "7"):
+            cus =Customer()
+            cus.saveDataUsingJSON()
+
+        elif (c == "8"):
+            cus = Customer()
+            cus.loadDataUsingJSON()
+
+
+        else:
+            exit(0)
